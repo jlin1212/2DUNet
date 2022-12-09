@@ -1,7 +1,9 @@
 import os
 import glob
-import numpy as np
+
+import torch
 import torchvision
+
 from torch.utils.data import Dataset
 from monai.transforms import (
     Compose,
@@ -23,24 +25,28 @@ class ImageData(Dataset):
 
         self.transform = Compose(
             [
+                RandRotated(['image', 'label'], prob=1, range_x=0.4),
+                RandZoomd(['image', 'label'], prob=1),
                 RandGaussianNoised(['image'], std=0.1*255),
                 ScaleIntensityd(['image', 'label']),
                 NormalizeIntensityd(['image']),
-                RandRotated(['image', 'label'], prob=1, range_x=0.4),
-                RandZoomd(['image', 'label'], prob=1)
             ]
         )
 
     def __len__(self):
-        return len(self.dataset_path)
+        return len(self.image_path)
 
     def __getitem__(self, index):
         image_path = self.image_path[index]
         segmentation_path = self.seg_path[index]
 
-        image_data = torchvision.io.read_image(image_path)
+        image_data = torchvision.io.read_image(image_path).type(torch.FloatTensor)
+        image_data = torch.mean(image_data, dim=0, keepdims=True)
         seg_data = torchvision.io.read_image(segmentation_path)
+        seg_data = seg_data[0:1,:,:]
 
         image_transformed = self.transform({'image': image_data, 'label': seg_data})
+
+        # print(image_transformed['image'].shape, image_transformed['label'].shape)
 
         return image_transformed

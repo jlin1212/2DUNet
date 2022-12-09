@@ -1,5 +1,5 @@
 import os
-from Data.Dataloader import ImageData
+from Data.Dataloader import Images
 from Models.Training import UNet_Train
 
 from pytorch_lightning import Trainer
@@ -17,6 +17,5 @@ if __name__ == "__main__":
 
     trainer.fit(
         model=UNet_Train(),
-        datamodule=ImageData(
-            batch_size=64)
+        datamodule=Images(batch_size=16)
     )

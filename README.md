@@ -14,3 +14,5 @@ monai = "0.9.1"
 jsonargparse = "4.13.0"
 nibabel = "4.0.1"
 scikit-image = "0.19.3"
+
+https://www.kaggle.com/datasets/maedemaftouni/covid19-ct-scan-lesion-segmentation-dataset
