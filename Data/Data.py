@@ -8,6 +8,8 @@ from monai.transforms import (
     ScaleIntensityd,
     RandGaussianNoised,
     NormalizeIntensityd,
+    RandRotated,
+    RandZoomd,
     #be sure to add any additional transforms here
     #look at other options: https://docs.monai.io/en/stable/transforms.html#dictionary-transforms
 )
@@ -23,8 +25,9 @@ class ImageData(Dataset):
             [
                 RandGaussianNoised(['image'], std=0.1*255),
                 ScaleIntensityd(['image', 'label']),
-                NormalizeIntensityd(['image'])
-                #additional transforms here
+                NormalizeIntensityd(['image']),
+                RandRotated(['image', 'label'], prob=1, range_x=0.4),
+                RandZoomd(['image', 'label'], prob=1)
             ]
         )
 
@@ -39,5 +42,5 @@ class ImageData(Dataset):
         seg_data = torchvision.io.read_image(segmentation_path)
 
         image_transformed = self.transform({'image': image_data, 'label': seg_data})
-        #additional label adjustments here, if needed
+
         return image_transformed
