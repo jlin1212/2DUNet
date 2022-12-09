@@ -3,7 +3,8 @@ import glob
 import numpy as np
 from torch.utils.data import Dataset
 from monai.transforms import (
-LoadImageD
+    Compose,
+    LoadImageD
     #be sure to add any additional transforms here
     #look at other options: https://docs.monai.io/en/stable/transforms.html#dictionary-transforms
 )
@@ -14,7 +15,6 @@ class ImageData(Dataset):
         self.raw_images_path = glob.glob(os.path.join(self.dataset_path + '/*'))
 
         self.transform = Compose(
-
             [
                 LoadImageD(keys=["Image", "Label"]),
                 #additional transforms here

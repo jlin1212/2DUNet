@@ -11,12 +11,12 @@ if __name__ == "__main__":
 
     trainer = Trainer(
         accelerator="gpu",
-        max_epochs=???,
+        max_epochs=50,
         callbacks=[lr_monitor, checkpoint_callback],
     )
 
     trainer.fit(
         model=UNet_Train(),
         datamodule=ImageData(
-            batch_size=??)
+            batch_size=64)
     )

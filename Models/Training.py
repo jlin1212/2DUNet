@@ -5,16 +5,17 @@ from pytorch_lightning import LightningModule
 import torch
 
 class UNet_Train(LightningModule):
-    def __init__(self, img_size=(1, 1, ??, ??, ??), batch_size=1, lr=??):
+    def __init__(self, img_size=(1, 1, 256, 256), batch_size=1, lr=1e-3):
         super().__init__()
 
         self.save_hyperparameters()
         self.example_input_array = [torch.zeros(self.hparams.img_size)]
 
         self.model = BasicUNet(
+            spatial_dims=2, features=(64, 128, 256, 512, 1024, 128)
             #specify model details here, including activation functions
             #documentation https://docs.monai.io/en/stable/networks.html#basicunet
-                     )
+        )
         #consider changing loss types
         self.DSC_Loss = DiceLoss(include_background=False)
 
@@ -33,7 +34,7 @@ class UNet_Train(LightningModule):
 
     def configure_optimizers(self):
         #set optimizer
-        optimizer = torch.optim.??(self.parameters(), lr=self.hparams.lr)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.lr)
         return [optimizer]
 
     def _prepare_batch(self, batch):
@@ -53,4 +54,3 @@ class UNet_Train(LightningModule):
         print(f'{stage}_DiceLoss', DSC.item())
 
         return DSC
-
