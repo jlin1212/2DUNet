@@ -1,3 +1,5 @@
 *:Zone.Identifier
 Data/covid
 __pycache__
+logs
+saved_models
