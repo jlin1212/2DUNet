@@ -7,6 +7,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 
 import matplotlib.pyplot as plt
+import torch.nn as nn
 
 if __name__ == "__main__":
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
@@ -18,7 +19,7 @@ if __name__ == "__main__":
 
     trainer = Trainer(
         accelerator="gpu",
-        max_epochs=1,
+        max_epochs=10,
         callbacks=[lr_monitor, checkpoint_callback],
         logger=logger,
         log_every_n_steps=1
@@ -29,7 +30,14 @@ if __name__ == "__main__":
         datamodule=Images(batch_size=2)
     )
 
-    predictions = trainer.predict(dataloaders=Images(batch_size=1))
+    samples, predictions = trainer.predict(dataloaders=Images(batch_size=1), ckpt_path='best')
 
-    plt.imshow(predictions[0][0,1,:,:])
+    print(predictions[0].shape)
+
+    fig, axes = plt.subplots(1, 2)
+
+    axes[0].imshow(samples[0][0,0,:,:])
+    axes[1].imshow(nn.Sigmoid()(predictions[0][0,1,:,:]))
+
     plt.savefig('pred.png')
+
