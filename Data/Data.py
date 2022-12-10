@@ -47,6 +47,10 @@ class ImageData(Dataset):
 
         image_transformed = self.transform({'image': image_data, 'label': seg_data})
 
+        bg_channel = torch.where(image_transformed['label'] < 0.5, 1., 0.)
+
+        image_transformed['label'] = torch.cat([bg_channel, 1 - bg_channel], dim=0)
+
         # print(image_transformed['image'].shape, image_transformed['label'].shape)
 
         return image_transformed
