@@ -19,25 +19,23 @@ if __name__ == "__main__":
 
     trainer = Trainer(
         accelerator="gpu",
-        max_epochs=10,
+        max_epochs=5,
         callbacks=[lr_monitor, checkpoint_callback],
         logger=logger,
-        log_every_n_steps=1
+        log_every_n_steps=1,
+        accumulate_grad_batches=8
     )
 
     trainer.fit(
         model=model,
-        datamodule=Images(batch_size=2)
+        datamodule=Images(batch_size=4)
     )
 
-    samples, predictions = trainer.predict(dataloaders=Images(batch_size=1), ckpt_path='best')
+    predictions = trainer.predict(dataloaders=Images(batch_size=1), ckpt_path='best')
 
     print(predictions[0].shape)
 
-    fig, axes = plt.subplots(1, 2)
-
-    axes[0].imshow(samples[0][0,0,:,:])
-    axes[1].imshow(nn.Sigmoid()(predictions[0][0,1,:,:]))
+    plt.imshow(nn.Sigmoid()(predictions[0][0,1,:,:]))
 
     plt.savefig('pred.png')
 

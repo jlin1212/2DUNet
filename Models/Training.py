@@ -30,7 +30,7 @@ class UNet_Train(LightningModule):
         self._common_step(batch, batch_idx, "val")
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
-        return batch['image'], self.forward(batch['image'])
+        return self.forward(batch['image'])
 
     def configure_optimizers(self):
         #set optimizer
